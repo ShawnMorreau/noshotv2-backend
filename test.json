@@ -1,0 +1,16 @@
+{
+    "cards":[
+        {
+            "Value":"abcd",
+            "Type":"OP"
+        },
+        {
+            "Value":"abcvwacwad",
+            "Type":"OP"
+        },
+        {
+            "Value":"abdwafwacd",
+            "Type":"OP"
+        }
+    ]
+}
