@@ -1,7 +1,6 @@
 package noshotv2
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -19,11 +18,14 @@ func NewLobby() *Lobby {
 
 func (l *Lobby) AddPlayer(player *Human) {
 	l.mu.Lock()
-	fmt.Println(player)
 	l.Players[player] = true
 	l.mu.Unlock()
 }
-
+func (l *Lobby) RemovePlayer(player *Human) {
+	l.mu.Lock()
+	delete(l.Players, player)
+	l.mu.Unlock()
+}
 func (l *Lobby) Size() int {
 	return len(l.Players)
 }

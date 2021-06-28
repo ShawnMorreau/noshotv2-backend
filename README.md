@@ -3,3 +3,5 @@ I went through a lot of https://quii.gitbook.io/learn-go-with-tests/ (https://gi
 TODOS
 Milestones 1: 
     - Create a refactored version of https://github.com/ShawnMorreau/no-shot-backend while following TDD as much as possible
+
+    - separate tests, gamelogic, and main.go 

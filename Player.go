@@ -35,8 +35,14 @@ func (p *Human) GetStore() *PlayerCardsStore {
 }
 func (p *Human) PlayCards(cards []Card) {
 	p.store.removeCards(cards)
+
 }
 
+/*
+	DRY here. Although, I think the only workaround would be using the reflection
+	package and at that point, it's easier and probably therefore I think
+	it's fine to have a little bit of repetition.
+*/
 func (store *PlayerCardsStore) removeCards(cards []Card) {
 	idx := -1
 	if cards[0].Type == "OP" {
