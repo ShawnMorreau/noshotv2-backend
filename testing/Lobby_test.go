@@ -1,25 +1,29 @@
 package noshotv2
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/shawnmorreau/noshotv2-backend/pkg/noshotv2"
+)
 
 func TestAddPlayer(t *testing.T) {
 	t.Run("Add two new players to the lobby", func(t *testing.T) {
-		lobby := NewLobby()
-		lobby.AddPlayer(NewHuman("JimBob"))
-		lobby.AddPlayer(NewHuman("BobJim"))
+		lobby := noshotv2.NewLobby()
+		lobby.AddPlayer(noshotv2.NewHuman("JimBob"))
+		lobby.AddPlayer(noshotv2.NewHuman("BobJim"))
 
 		assertLobbySize(t, lobby.Size(), 2)
 	})
 }
 func TestRemovePlayer(t *testing.T) {
 	t.Run("Remove a player from the lobby", func(t *testing.T) {
-		p1 := NewHuman("bob")
+		p1 := noshotv2.NewHuman("bob")
 
-		players := map[*Human]bool{
-			p1:              true,
-			NewHuman("jim"): true,
+		players := map[*noshotv2.Human]bool{
+			p1:                       true,
+			noshotv2.NewHuman("jim"): true,
 		}
-		lobby := &Lobby{
+		lobby := &noshotv2.Lobby{
 			Players: players,
 		}
 		lobby.RemovePlayer(p1)

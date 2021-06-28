@@ -2,11 +2,13 @@ package noshotv2
 
 import (
 	"testing"
+
+	"github.com/shawnmorreau/noshotv2-backend/pkg/noshotv2"
 )
 
 func TestPopulate(t *testing.T) {
-	var got Deck
-	err := ConvertJSONFileToStruct("test.json", &got)
+	var got noshotv2.Deck
+	err := noshotv2.ConvertJSONFileToStruct("test.json", &got)
 	if err != nil {
 		t.Fatalf("error occured in JSON %q", err)
 	}

@@ -2,13 +2,15 @@ package noshotv2
 
 import (
 	"testing"
+
+	"github.com/shawnmorreau/noshotv2-backend/pkg/noshotv2"
 )
 
-var fakePlayers = []Player{}
+var fakePlayers = []noshotv2.Player{}
 
 func TestDisperseCards(t *testing.T) {
 	t.Run("Test adding cards to player with no cards", func(t *testing.T) {
-		fakePlayers = append(fakePlayers, NewHuman("Jim"))
+		fakePlayers = append(fakePlayers, noshotv2.NewHuman("Jim"))
 		assertCardsArrayLength(t)
 	})
 }
@@ -18,7 +20,7 @@ func assertCardsArrayLength(t testing.TB) {
 	for _, player := range fakePlayers {
 		player.GrabCards()
 		got1 = len(player.GetStore().OP)
-		got2 = len(player.GetStore().noShot)
+		got2 = len(player.GetStore().NoShot)
 
 		want1 = 5
 		want2 = 3

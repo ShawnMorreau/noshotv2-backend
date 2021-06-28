@@ -5,12 +5,16 @@ type Player interface {
 	GetStore() *PlayerCardsStore
 	GrabCards()
 	GetID() string
+	SetStore(store *PlayerCardsStore)
 }
 type Human struct {
 	ID    string
 	store *PlayerCardsStore
 }
 
+func (p *Human) SetStore(store *PlayerCardsStore) {
+	p.store = store
+}
 func NewHuman(name string) *Human {
 	return &Human{ID: name, store: NewCardStore()}
 }
@@ -20,13 +24,13 @@ func (p *Human) GetID() string {
 
 type PlayerCardsStore struct {
 	OP     []Card
-	noShot []Card
+	NoShot []Card
 }
 
 func NewCardStore() *PlayerCardsStore {
 	return &PlayerCardsStore{
 		OP:     []Card{},
-		noShot: []Card{},
+		NoShot: []Card{},
 	}
 }
 
@@ -54,10 +58,10 @@ func (store *PlayerCardsStore) removeCards(cards []Card) {
 		}
 	} else {
 		for _, card := range cards {
-			idx = store.getIndexOfCard(card, store.noShot)
-			copy(store.noShot[idx:], store.noShot[idx+1:])
-			store.noShot[len(store.noShot)-1] = Card{}
-			store.noShot = store.noShot[:len(store.noShot)-1]
+			idx = store.getIndexOfCard(card, store.NoShot)
+			copy(store.NoShot[idx:], store.NoShot[idx+1:])
+			store.NoShot[len(store.NoShot)-1] = Card{}
+			store.NoShot = store.NoShot[:len(store.NoShot)-1]
 		}
 	}
 

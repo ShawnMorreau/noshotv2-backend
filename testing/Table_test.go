@@ -2,9 +2,11 @@ package noshotv2
 
 import (
 	"testing"
+
+	"github.com/shawnmorreau/noshotv2-backend/pkg/noshotv2"
 )
 
-var testTable = []PlayedInfo{
+var testTable = []noshotv2.PlayedInfo{
 	{
 		ID:     "Shawn",
 		OP:     []string{},
@@ -23,8 +25,8 @@ var testTable = []PlayedInfo{
 }
 
 func TestUpdateTable(t *testing.T) {
-	table := Table{Players: testTable}
-	testCards := []Card{
+	table := noshotv2.Table{Players: testTable}
+	testCards := []noshotv2.Card{
 		{Value: "t1", Type: "OP"},
 		{Value: "t2", Type: "OP"},
 	}
@@ -38,7 +40,7 @@ func TestUpdateTable(t *testing.T) {
 }
 
 func TestInitializeTable(t *testing.T) {
-	table := NewTable()
+	table := noshotv2.NewTable()
 	players := []string{"Shawn", "Kohn", "Jimmy"}
 
 	table.Initialize(players)

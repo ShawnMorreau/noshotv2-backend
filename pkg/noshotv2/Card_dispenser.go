@@ -5,7 +5,7 @@ const MAX_NOSHOT_CARDS = 3
 
 func (p *Human) GrabCards() {
 	p.store.OP = topUpCards(p.store.OP, "OP")
-	p.store.noShot = topUpCards(p.store.noShot, "NOSHOT")
+	p.store.NoShot = topUpCards(p.store.NoShot, "NOSHOT")
 }
 
 func topUpCards(cards []Card, Type string) []Card {
