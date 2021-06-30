@@ -18,19 +18,20 @@ func NewTable() *Table {
 func createPlayerInfo(name string) PlayedInfo {
 	return PlayedInfo{ID: name, OP: []string{}, NoShot: []string{}}
 }
-func (t *Table) Initialize(players []string) {
+func (t *Table) Initialize(players []string, judge string) {
 	for _, player := range players {
-		t.Players = append(t.Players, createPlayerInfo(player))
+		if player != judge {
+			t.Players = append(t.Players, createPlayerInfo(player))
+		}
 	}
 }
-func (t *Table) UpdateTable(user string, cardsToAdd []Card) {
-	Type := cardsToAdd[0].Type
-	cards := cardsToStringArray(cardsToAdd)
+
+func (t *Table) UpdateTable(user string, cardsToAdd []string, Type string) {
 	if Type == "OP" {
-		t.appendToOP(user, cards)
+		t.appendToOP(user, cardsToAdd)
 		return
 	}
-	t.appendToNoShot(user, cards)
+	t.appendToNoShot(user, cardsToAdd)
 }
 
 func (t *Table) appendToOP(user string, cards []string) {
@@ -46,11 +47,4 @@ func (t *Table) appendToNoShot(user string, cards []string) {
 			t.Players[i].NoShot = cards
 		}
 	}
-}
-func cardsToStringArray(cards []Card) []string {
-	var res []string
-	for _, card := range cards {
-		res = append(res, card.Value)
-	}
-	return res
 }

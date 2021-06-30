@@ -7,6 +7,26 @@ import (
 )
 
 var fakePlayers = []noshotv2.Player{}
+var fakeDeck = noshotv2.Deck{
+	Cards: []noshotv2.Card{
+		{Value: "abcd", Type: "OP"},
+		{Value: "adwacd", Type: "OP"},
+		{Value: "abfwadd", Type: "OP"},
+		{Value: "abdwafd", Type: "OP"},
+		{Value: "abfwaccd", Type: "OP"},
+		{Value: "adwdwaacd", Type: "OP"},
+		{Value: "abfcwac2awadd", Type: "OP"},
+		{Value: "abdadwawafd", Type: "OP"},
+		{Value: "abcd", Type: "OP"},
+		{Value: "adwacd", Type: "OP"},
+		{Value: "abfwadd", Type: "OP"},
+		{Value: "abdwafd", Type: "OP"},
+		{Value: "abcd", Type: "OP"},
+		{Value: "adwacd", Type: "OP"},
+		{Value: "abfwadd", Type: "OP"},
+		{Value: "abdwafd", Type: "OP"},
+	},
+}
 
 func TestDisperseCards(t *testing.T) {
 	t.Run("Test adding cards to player with no cards", func(t *testing.T) {
@@ -16,19 +36,10 @@ func TestDisperseCards(t *testing.T) {
 }
 func assertCardsArrayLength(t testing.TB) {
 	t.Helper()
-	var got1, got2, want1, want2 int
-	for _, player := range fakePlayers {
-		player.GrabCards()
-		got1 = len(player.GetStore().OP)
-		got2 = len(player.GetStore().NoShot)
-
-		want1 = 5
-		want2 = 3
-		if got1 != want1 {
-			t.Errorf("OP Cards -> got %d, want %d", got1, want1)
-		}
-		if got2 != want2 {
-			t.Errorf("noShot Cards -> got %d, want %d", got2, want2)
-		}
+	cards := fakeDeck.GetRandomCardsFromDeck(5)
+	got := len(cards)
+	want := 5
+	if got != want {
+		t.Errorf("OP Cards -> got %d, want %d", got, want)
 	}
 }

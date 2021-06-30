@@ -3,7 +3,7 @@ I went through a lot of https://quii.gitbook.io/learn-go-with-tests/ (https://gi
 TODOS
 Milestones 1: 
     - Create a refactored version of https://github.com/ShawnMorreau/no-shot-backend while following TDD as much as possible
-
-    - separate tests, gamelogic, and main.go 
+    - separated tests, gamelogic, and main.go 
+    - I did a bad thing. I started writing a bunch of code again without writing the tests. A lot of code changed meaning there's a good chance my tests don't pass anymore. On the plus side - I have the game working as it did before with much more managable code, meaning adding bots will be much easier than it would have been before. My main focus now will be to ensure I am testing the things that for sure need to be tested. Maybe add in some integration tests to ensure that all my components are working well together on the backend.  
 
    
