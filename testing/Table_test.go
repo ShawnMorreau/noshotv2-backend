@@ -26,11 +26,9 @@ var testTable = []noshotv2.PlayedInfo{
 
 func TestUpdateTable(t *testing.T) {
 	table := noshotv2.Table{Players: testTable}
-	testCards := []noshotv2.Card{
-		{Value: "t1", Type: "OP"},
-		{Value: "t2", Type: "OP"},
-	}
-	table.UpdateTable("Shawn", testCards)
+	testCards := []string{
+		"t1", "t2"}
+	table.UpdateTable("Shawn", testCards, "OP")
 	got := len(testTable[0].OP)
 	want := 2
 
@@ -43,7 +41,7 @@ func TestInitializeTable(t *testing.T) {
 	table := noshotv2.NewTable()
 	players := []string{"Shawn", "Kohn", "Jimmy"}
 
-	table.Initialize(players)
+	table.Initialize(players, "judge")
 	got := table
 	for _, player := range got.Players {
 		if !contains(t, player.ID, players) {

@@ -7,7 +7,7 @@ import (
 )
 
 type Player interface {
-	PlayCards(cards []Card)
+	PlayCards(cards []string, Type string)
 	GetStore() *PlayerCardsStore
 	GrabCards()
 	SetStore(store *PlayerCardsStore)

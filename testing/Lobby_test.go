@@ -18,13 +18,15 @@ func TestAddPlayer(t *testing.T) {
 func TestRemovePlayer(t *testing.T) {
 	t.Run("Remove a player from the game", func(t *testing.T) {
 		p1 := noshotv2.NewHuman("bob")
+		p2 := noshotv2.NewHuman("jim")
 
 		players := map[*noshotv2.Human]bool{
-			p1:                       true,
-			noshotv2.NewHuman("jim"): true,
+			p1: true,
+			p2: true,
 		}
 		game := &noshotv2.Game{
-			Players: players,
+			Players:      players,
+			PlayersArray: []string{p1.ID, p2.ID},
 		}
 		game.RemovePlayer(p1)
 		assertGameSize(t, game.Size(), 1)
