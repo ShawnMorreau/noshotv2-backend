@@ -27,6 +27,11 @@ type playerAndActionRequired struct {
 	Action      string
 	FirstToLeft int
 }
+type Payload struct {
+	Message string
+	User    string
+	Type    int
+}
 type GameState struct {
 	GameStarted   bool
 	Players       []string
