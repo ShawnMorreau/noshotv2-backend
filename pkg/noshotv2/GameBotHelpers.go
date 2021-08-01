@@ -24,5 +24,5 @@ func (game *Game) RemoveAllBots() {
 			game.RemoveGenericPlayer(game.getClientFromName(p))
 		}
 	}
-	game.createAndSendPlayerJoinedOrLeft(3, "Bot has left...", p)
+	game.createAndSendPlayerJoinedOrLeft(3, "Bot has left...", "someBot")
 }
