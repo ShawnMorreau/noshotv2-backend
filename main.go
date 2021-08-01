@@ -22,7 +22,7 @@ func serveWs(game *noshotv2.Game, w http.ResponseWriter, r *http.Request) {
 		Game: game,
 		ID:   randomdata.SillyName(),
 	}
-	game.Register <- player
+	game.AddAnyTypeOfPlayer <- player
 	player.Read()
 }
 func setupRoutes() {
@@ -39,5 +39,6 @@ func main() {
 	if port == "" {
 		port = "5000"
 	}
+	fmt.Println("Starting on port " + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

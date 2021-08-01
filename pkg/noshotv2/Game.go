@@ -2,135 +2,105 @@ package noshotv2
 
 import (
 	"strings"
-	"sync"
 )
 
-// "New Round Starting"
 const NO_SHOT_DELIMITER = "@#@@$@#@"
 const OP_DELIMITER = "~+~...$"
 const WINNER_DELIMITER = "(k(*3@#"
-
-type Game struct {
-	Host         *Human
-	Players      map[*Human]bool
-	Register     chan *Human
-	Unregister   chan *Human
-	Broadcast    chan Payload
-	mu           sync.Mutex
-	PlayersArray []string
-	Table        *Table
-	Judge        int
-	Turn         int
-}
-type playerAndActionRequired struct {
-	Turn        int
-	Action      string
-	FirstToLeft int
-}
-type Payload struct {
-	Message string
-	User    string
-	Type    int
-}
-type GameState struct {
-	GameStarted   bool
-	Players       []string
-	TurnAndAction playerAndActionRequired
-	Judge         int
-	Type          int
-	Body          string
-	ID            string
-	Host          string
-	MyOpCards     []Card
-	MyNoShotCards []Card
-	CardsPlayed   []PlayedInfo
-	Winner        string
-}
+const ADD_BOT_DELIMITER = ";'wp';"
+const REMOVE_BOT_DELIMITER = ";[];"
+const OP = "OP"
+const NO_SHOT = "noShot"
 
 func NewGame() *Game {
 	return &Game{
-		Players:    make(map[*Human]bool),
-		Register:   make(chan *Human),
-		Unregister: make(chan *Human),
-		Broadcast:  make(chan Payload),
+		IPlayers:           make(map[Player]bool),
+		AddAnyTypeOfPlayer: make(chan Player),
+		Players:            make(map[*Human]bool),
+		Register:           make(chan *Human),
+		Unregister:         make(chan Player),
+		Broadcast:          make(chan Payload),
 	}
 }
 
 func (game *Game) Start() {
-	game.StartPings()
+	go game.StartPings()
 	for {
 		select {
-		case user := <-game.Register:
-			user.store = NewCardStore()
-			game.AddPlayer(user)
-			game.createAndSendPlayerJoinedOrLeft(2, "User has joined...", user.ID)
+		//adding players to structures that will hold Humans and Bots
+		case user := <-game.AddAnyTypeOfPlayer:
+			user.SetStore(NewCardStore())
+			game.addGenericPlayer(user)
+			game.createAndSendPlayerJoinedOrLeft(2, "User has joined...", user.GetID())
+		//remove said players
 		case user := <-game.Unregister:
-			game.RemovePlayer(user)
-			game.createAndSendPlayerJoinedOrLeft(3, "User has Left...", user.ID)
+			game.RemoveGenericPlayer(user)
+			game.createAndSendPlayerJoinedOrLeft(3, "User has Left...", user.GetID())
+		//This one is more of a generic catch, but if a message comes in from the channel..
+		//do something
 		case message := <-game.Broadcast:
 			switch message.Message {
+			//setup the game and send back the gamestate to players
 			case "start game":
 				InitializeDecks()
 				game.Table = NewTable()
-				game.Table.Initialize(game.PlayersArray, game.PlayersArray[game.Judge])
 				game.Judge = game.getRandJudge()
+				game.Table.Initialize(game.PlayersArray, game.PlayersArray[game.Judge])
 				game.newRound()
+			//reset gamestate and send back to players
 			case "new round":
+				for player := range game.IPlayers {
+					GrabCards(player)
+				}
 				game.Judge = game.getPlayerToLeft(game.Judge)
 				game.Table = NewTable()
 				game.Table.Initialize(game.PlayersArray, game.PlayersArray[game.Judge])
 				game.newRound()
+			//tell client that the game is over
 			case "game ended":
-				for player := range game.Players {
-					//gotta reset the store or it'll act weird if you end the game and try to restart it again with a full store.
-					//If I want to fix this, change getPlayerActionAndTurn to check the cards played rather than the player's
-					//hand
-					player.store = NewCardStore()
-					player.Conn.WriteJSON(GameState{Type: 99, GameStarted: false})
+				for player := range game.IPlayers {
+					if !strings.Contains(player.GetID(), "_bot") {
+						p := player.(*Human)
+						p.store = NewCardStore()
+						p.Conn.WriteJSON(GameState{Type: 99, GameStarted: false})
+					} else {
+						player.SetStore(NewCardStore())
+					}
 				}
+			//all defaults are for handling a played card, picking a winner, or adding bots
 			default:
 				if strings.Contains(message.Message, OP_DELIMITER) {
 					cards := strings.Split(message.Message, OP_DELIMITER)
-					game.getClientFromName(game.PlayersArray[game.Turn]).PlayCards(cards, "OP")
-					game.Table.UpdateTable(message.User, cards, "OP")
+					game.getClientFromName(game.PlayersArray[game.Turn]).PlayCards(cards, OP)
+					game.Table.UpdateTable(message.User, cards, OP)
 					game.handleCards(message, OP_DELIMITER)
 				} else if strings.Contains(message.Message, NO_SHOT_DELIMITER) {
 					cards := strings.Split(message.Message, NO_SHOT_DELIMITER)
-					game.getClientFromName(game.PlayersArray[game.Turn]).PlayCards(cards[:1], "noShot")
-					game.Table.UpdateTable(message.User, cards[:1], "noShot")
+					game.getClientFromName(game.PlayersArray[game.Turn]).PlayCards(cards[:1], NO_SHOT)
+					game.Table.UpdateTable(message.User, cards[:1], NO_SHOT)
 					game.handleCards(message, NO_SHOT_DELIMITER)
+				} else if strings.Contains(message.Message, ADD_BOT_DELIMITER) {
+					game.AddBots()
+				} else if strings.Contains(message.Message, REMOVE_BOT_DELIMITER) {
+					game.RemoveBots()
 				} else if strings.Contains(message.Message, WINNER_DELIMITER) {
-					winner := strings.Split(message.Message, WINNER_DELIMITER)
-					playerAndActionRequired := game.getPlayerAndActionRequired()
-					game.Turn = game.Judge
-					for player := range game.Players {
-						player.Conn.WriteJSON(GameState{
-							GameStarted:   true,
-							Players:       game.PlayersArray,
-							TurnAndAction: playerAndActionRequired,
-							Judge:         game.Judge,
-							Type:          6,
-							Body:          "Picking a winner",
-							CardsPlayed:   game.Table.Players,
-							Winner:        winner[0],
-						})
-					}
+					game.handleWinner(message.Message)
 				}
 			}
 		}
 	}
-
 }
-
 func (game *Game) createAndSendPlayerJoinedOrLeft(Type int, body string, who string) {
-	for client := range game.Players {
-		if err := client.Conn.WriteJSON(GameState{
-			Players: game.PlayersArray,
-			Host:    game.Host.ID,
-			Type:    Type,
-			Body:    body,
-			ID:      who}); err != nil {
-			return
+	for client := range game.IPlayers {
+		if !strings.Contains(client.GetID(), "_bot") {
+			if err := client.(*Human).Conn.WriteJSON(GameState{
+				Players: game.PlayersArray,
+				Host:    game.Host.ID,
+				Type:    Type,
+				Body:    body,
+				ID:      who}); err != nil {
+				return
+			}
 		}
 	}
 }

@@ -16,7 +16,6 @@ const SLEEP_TIME = 54
 */
 func (game *Game) StartPings() {
 	for {
-		fmt.Println("called")
 		time.Sleep(SLEEP_TIME * time.Second)
 		game.KeepSocketAlive()
 	}

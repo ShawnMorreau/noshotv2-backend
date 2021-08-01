@@ -8,9 +8,9 @@ import (
 const MAX_OP_CARDS = 5
 const MAX_NOSHOT_CARDS = 3
 
-func (p *Human) GrabCards() {
-	p.store.OP = topUpCards(p.store.OP, "OP")
-	p.store.NoShot = topUpCards(p.store.NoShot, "NOSHOT")
+func GrabCards(p Player) {
+	p.GetStore().OP = topUpCards(p.GetStore().OP, "OP")
+	p.GetStore().NoShot = topUpCards(p.GetStore().NoShot, "NOSHOT")
 }
 
 func topUpCards(cards []Card, Type string) []Card {

@@ -19,7 +19,9 @@ func NewHuman(name string) *Human {
 func (p *Human) GetID() string {
 	return p.ID
 }
-
+func (p *Human) SetStore(store *PlayerCardsStore) {
+	p.store = store
+}
 func (p *Human) GetStore() *PlayerCardsStore {
 	return p.store
 }
@@ -43,10 +45,6 @@ func (p *Human) playCards(cards []string, Type string) {
 			p.store.NoShot = p.store.NoShot[:len(p.store.NoShot)-1]
 		}
 	}
-}
-
-func (p *Human) SetStore(store *PlayerCardsStore) {
-	p.store = store
 }
 
 func (player *Human) Read() {
