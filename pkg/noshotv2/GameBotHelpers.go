@@ -3,7 +3,7 @@ package noshotv2
 import "strings"
 
 func (game *Game) AddBots() {
-
+	//comment
 	bot := NewBot(game)
 	go bot.Read()
 	game.addGenericPlayer(bot)
