@@ -37,7 +37,7 @@ func (bot *Bot) GetStore() *PlayerCardsStore {
 
 func (bot *Bot) Read() {
 	defer func() {
-		bot.Game.Unregister <- bot
+		bot.Game.RemoveGenericPlayer(bot)
 	}()
 	for {
 		if bot.Game.PlayersArray[bot.Game.PlayerAndAction.Turn] == bot.ID {
