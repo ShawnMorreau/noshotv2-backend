@@ -34,6 +34,9 @@ func (game *Game) Start() {
 			game.createAndSendPlayerJoinedOrLeft(2, "User has joined...", user.GetID())
 		//remove said players
 		case user := <-game.Unregister:
+			if user.GetID() == game.Host.ID {
+				game.RemoveAllBots()
+			}
 			game.RemoveGenericPlayer(user)
 			game.createAndSendPlayerJoinedOrLeft(3, "User has Left...", user.GetID())
 		//This one is more of a generic catch, but if a message comes in from the channel..
