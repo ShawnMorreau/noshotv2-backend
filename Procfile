@@ -1,1 +1,1 @@
-web: bin/noshot
+web: bin/noshotv2-backend
