@@ -25,9 +25,7 @@ func NewBot(game *Game) *Bot {
 func (bot *Bot) GetID() string {
 	return bot.ID
 }
-func (bot *Bot) PlayCards(cards []string, Type string) {
 
-}
 func (bot *Bot) SetStore(store *PlayerCardsStore) {
 	bot.store = store
 }
@@ -55,36 +53,13 @@ func (bot *Bot) Read() {
 			case PLAY_NOSHOT:
 				cards := selectRandomCard(bot.store.NoShot, 1)
 				PlayCards(cards, NO_SHOT, bot)
-				bot.Game.Table.UpdateTable(bot.GetID(), cards, NO_SHOT)
+				bot.Game.Table.UpdateTable(bot.Game.getNextUser(bot.GetID()), cards, NO_SHOT)
 				mimicPayload := buildPayload(cards, NO_SHOT_DELIMITER)
 				bot.Game.handleCards(mimicPayload, NO_SHOT_DELIMITER)
 			}
 		}
 		time.Sleep(10 * time.Second)
 	}
-}
-
-func buildPayload(cards []string, delimiter string) Payload {
-	payload := NewPayload()
-	if delimiter == OP_DELIMITER {
-		payload.Message = fmt.Sprintf("%s%s%s", cards[0], delimiter, cards[1])
-	} else {
-		payload.Message = fmt.Sprintf("%s%s", cards[0], delimiter)
-	}
-	return payload
-}
-func selectRandomCard(cardArr []Card, num int) []string {
-	rand.Seed(time.Now().UnixNano())
-	var cards []string
-
-	for len(cards) < num {
-		randInt := rand.Intn(len(cardArr))
-		randCard := cardArr[randInt].Value
-		if !contains(cards, randCard) {
-			cards = append(cards, randCard)
-		}
-	}
-	return cards
 }
 
 func contains(cards []string, card string) bool {

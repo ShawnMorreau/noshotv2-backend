@@ -1,7 +1,7 @@
 package noshotv2
 
 type Player interface {
-	PlayCards(cards []string, Type string)
+	// PlayCards(cards []string, Type string)
 	GetStore() *PlayerCardsStore
 	Read()
 	SetStore(store *PlayerCardsStore)

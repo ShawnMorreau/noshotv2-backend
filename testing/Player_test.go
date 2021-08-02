@@ -27,13 +27,13 @@ func TestPlayCards(t *testing.T) {
 
 	t.Run("Test playing two OP cards", func(t *testing.T) {
 		cardsToPlay := []string{hand.OP[1].Value, hand.OP[0].Value}
-		player.PlayCards(cardsToPlay, "OP")
+		noshotv2.PlayCards(cardsToPlay, "OP", player)
 
 		assertCardsInHand(t, len(hand.OP), 3)
 	})
 	t.Run("Test Playing one noShot card", func(t *testing.T) {
 		cardToPlay := []string{hand.NoShot[0].Value}
-		player.PlayCards(cardToPlay, "noShot")
+		noshotv2.PlayCards(cardToPlay, "noShot", player)
 
 		assertCardsInHand(t, len(hand.NoShot), 2)
 	})

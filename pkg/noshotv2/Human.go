@@ -25,27 +25,6 @@ func (p *Human) SetStore(store *PlayerCardsStore) {
 func (p *Human) GetStore() *PlayerCardsStore {
 	return p.store
 }
-func (p *Human) PlayCards(cards []string, Type string) {
-	p.playCards(cards, Type)
-}
-func (p *Human) playCards(cards []string, Type string) {
-	idx := -1
-	if Type == "OP" {
-		for _, card := range cards {
-			idx = p.store.getIndexOfCard(card, p.store.OP)
-			copy(p.store.OP[idx:], p.store.OP[idx+1:])
-			p.store.OP[len(p.store.OP)-1] = Card{}
-			p.store.OP = p.store.OP[:len(p.store.OP)-1]
-		}
-	} else {
-		for _, card := range cards {
-			idx = p.store.getIndexOfCard(card, p.store.NoShot)
-			copy(p.store.NoShot[idx:], p.store.NoShot[idx+1:])
-			p.store.NoShot[len(p.store.NoShot)-1] = Card{}
-			p.store.NoShot = p.store.NoShot[:len(p.store.NoShot)-1]
-		}
-	}
-}
 
 func (player *Human) Read() {
 	defer func() {

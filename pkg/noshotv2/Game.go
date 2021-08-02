@@ -30,7 +30,7 @@ func (game *Game) Start() {
 		//adding players to structures that will hold Humans and Bots
 		case user := <-game.AddAnyTypeOfPlayer:
 			user.SetStore(NewCardStore())
-			game.addGenericPlayer(user)
+			game.AddGenericPlayer(user)
 			game.createAndSendPlayerJoinedOrLeft(2, "User has joined...", user.GetID())
 		//remove said players
 		case user := <-game.Unregister:
@@ -74,14 +74,16 @@ func (game *Game) Start() {
 			default:
 				if strings.Contains(message.Message, OP_DELIMITER) {
 					cards := strings.Split(message.Message, OP_DELIMITER)
-					game.getClientFromName(game.PlayersArray[game.Turn]).PlayCards(cards, OP)
+					PlayCards(cards, OP, game.getClientFromName(message.User))
 					game.Table.UpdateTable(message.User, cards, OP)
 					game.handleCards(message, OP_DELIMITER)
 				} else if strings.Contains(message.Message, NO_SHOT_DELIMITER) {
 					cards := strings.Split(message.Message, NO_SHOT_DELIMITER)
-					game.getClientFromName(game.PlayersArray[game.Turn]).PlayCards(cards[:1], NO_SHOT)
-					game.Table.UpdateTable(message.User, cards[:1], NO_SHOT)
+					PlayCards(cards[:1], NO_SHOT, game.getClientFromName(message.User))
+					nextUser := game.getNextUser(message.User)
+					game.Table.UpdateTable(nextUser, cards[:1], NO_SHOT)
 					game.handleCards(message, NO_SHOT_DELIMITER)
+
 				} else if strings.Contains(message.Message, ADD_BOT_DELIMITER) {
 					game.AddBots()
 				} else if strings.Contains(message.Message, REMOVE_BOT_DELIMITER) {
@@ -89,20 +91,6 @@ func (game *Game) Start() {
 				} else if strings.Contains(message.Message, WINNER_DELIMITER) {
 					game.handleWinner(message.Message)
 				}
-			}
-		}
-	}
-}
-func (game *Game) createAndSendPlayerJoinedOrLeft(Type int, body string, who string) {
-	for client := range game.IPlayers {
-		if !strings.Contains(client.GetID(), "_bot") {
-			if err := client.(*Human).Conn.WriteJSON(GameState{
-				Players: game.PlayersArray,
-				Host:    game.Host.ID,
-				Type:    Type,
-				Body:    body,
-				ID:      who}); err != nil {
-				return
 			}
 		}
 	}

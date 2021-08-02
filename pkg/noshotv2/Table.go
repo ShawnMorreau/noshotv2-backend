@@ -41,6 +41,7 @@ func (t *Table) appendToOP(user string, cards []string) {
 		}
 	}
 }
+
 func (t *Table) appendToNoShot(user string, cards []string) {
 	for i, player := range t.Players {
 		if player.ID == user {

@@ -9,8 +9,8 @@ import (
 func TestAddPlayer(t *testing.T) {
 	t.Run("Add two new players to the game", func(t *testing.T) {
 		game := noshotv2.NewGame()
-		game.AddPlayer(noshotv2.NewHuman("JimBob"))
-		game.AddPlayer(noshotv2.NewHuman("BobJim"))
+		game.AddGenericPlayer(noshotv2.NewHuman("JimBob"))
+		game.AddGenericPlayer(noshotv2.NewHuman("BobJim"))
 
 		assertGameSize(t, game.Size(), 2)
 	})
@@ -28,7 +28,7 @@ func TestRemovePlayer(t *testing.T) {
 			Players:      players,
 			PlayersArray: []string{p1.ID, p2.ID},
 		}
-		game.RemovePlayer(p1)
+		game.RemoveGenericPlayer(p1)
 		assertGameSize(t, game.Size(), 1)
 	})
 }
