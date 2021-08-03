@@ -1,7 +1,5 @@
 package noshotv2
 
-import "sync"
-
 type Game struct {
 	Host               *Human
 	IPlayers           map[Player]bool
@@ -10,7 +8,6 @@ type Game struct {
 	Register           chan *Human
 	Unregister         chan Player
 	Broadcast          chan Payload
-	mu                 sync.Mutex
 	PlayersArray       []string
 	Table              *Table
 	Judge              int

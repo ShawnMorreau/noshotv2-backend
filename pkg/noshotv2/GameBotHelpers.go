@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -23,12 +24,22 @@ func (game *Game) RemoveBots() {
 	}
 }
 func (game *Game) RemoveAllBots() {
+	temp := []string{}
+	var wg sync.WaitGroup
 	for _, p := range game.PlayersArray {
-		if strings.Contains(p, "_bot") {
-			game.RemoveGenericPlayer(game.getClientFromName(p))
+		if !strings.Contains(p, "_bot") {
+			temp = append(temp, p)
+		} else {
+			wg.Add(1)
+			go game.removeBotFromMap(p, &wg)
 		}
 	}
-	game.createAndSendPlayerJoinedOrLeft(3, "Bot has left...", "someBot")
+	wg.Wait()
+	game.PlayersArray = temp
+}
+func (game *Game) removeBotFromMap(bot string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	delete(game.IPlayers, game.getClientFromName(bot))
 }
 
 //handleCards looks for a Payload, so we mimic what a payload from the client would look like

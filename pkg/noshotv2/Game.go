@@ -1,6 +1,7 @@
 package noshotv2
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -32,12 +33,14 @@ func (game *Game) Start() {
 			user.SetStore(NewCardStore())
 			game.AddGenericPlayer(user)
 			game.createAndSendPlayerJoinedOrLeft(2, "User has joined...", user.GetID())
-		//remove said players
+			//remove said players
 		case user := <-game.Unregister:
+			game.RemoveGenericPlayer(user)
 			if user.GetID() == game.Host.ID {
 				game.RemoveAllBots()
+				game.chooseNewHost()
 			}
-			game.RemoveGenericPlayer(user)
+			fmt.Println(game.IPlayers)
 			game.createAndSendPlayerJoinedOrLeft(3, "User has Left...", user.GetID())
 		//This one is more of a generic catch, but if a message comes in from the channel..
 		//do something

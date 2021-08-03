@@ -2,6 +2,7 @@ package noshotv2
 
 import (
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -86,6 +87,14 @@ func (game *Game) getPlayerAndActionRequired() playerAndActionRequired {
 			return playerAndActionRequired{Turn: next, Action: PLAY_OP, FirstToLeft: -1}
 		} else {
 			return playerAndActionRequired{Turn: next, Action: PLAY_NOSHOT, FirstToLeft: -1}
+		}
+	}
+}
+func (game *Game) chooseNewHost() {
+	for p := range game.IPlayers {
+		if !strings.Contains(p.GetID(), "_bot") {
+			game.Host = p.(*Human)
+			return
 		}
 	}
 }
