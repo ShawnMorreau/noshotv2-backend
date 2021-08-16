@@ -1,17 +1,18 @@
 package noshotv2
 
 import (
-	"fmt"
 	"strings"
 )
 
-const NO_SHOT_DELIMITER = "@#@@$@#@"
-const OP_DELIMITER = "~+~...$"
-const WINNER_DELIMITER = "(k(*3@#"
-const ADD_BOT_DELIMITER = ";'wp';"
-const REMOVE_BOT_DELIMITER = ";[];"
-const OP = "OP"
-const NO_SHOT = "noShot"
+const (
+	NO_SHOT_DELIMITER    = "@#@@$@#@"
+	OP_DELIMITER         = "~+~...$"
+	WINNER_DELIMITER     = "(k(*3@#"
+	ADD_BOT_DELIMITER    = ";'wp';"
+	REMOVE_BOT_DELIMITER = ";[];"
+	OP                   = "OP"
+	NO_SHOT              = "noShot"
+)
 
 func NewGame() *Game {
 	return &Game{
@@ -23,13 +24,12 @@ func NewGame() *Game {
 		Broadcast:          make(chan Payload),
 	}
 }
-
 func (game *Game) Start() {
-	go game.StartPings()
 	for {
 		select {
 		//adding players to structures that will hold Humans and Bots
 		case user := <-game.AddAnyTypeOfPlayer:
+			//Maybe check if store is set so it's not set again?
 			user.SetStore(NewCardStore())
 			game.AddGenericPlayer(user)
 			game.createAndSendPlayerJoinedOrLeft(2, "User has joined...", user.GetID())
@@ -40,7 +40,6 @@ func (game *Game) Start() {
 				game.RemoveAllBots()
 				game.chooseNewHost()
 			}
-			fmt.Println(game.IPlayers)
 			game.createAndSendPlayerJoinedOrLeft(3, "User has Left...", user.GetID())
 		//This one is more of a generic catch, but if a message comes in from the channel..
 		//do something

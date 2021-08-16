@@ -10,27 +10,30 @@ import (
 	"github.com/shawnmorreau/noshotv2-backend/pkg/noshotv2"
 )
 
-func serveWs(game *noshotv2.Game, w http.ResponseWriter, r *http.Request) {
+// func serveWs(game *noshotv2.Game, w http.ResponseWriter, r *http.Request) {
+func serveWs(lobby *noshotv2.Lobby, w http.ResponseWriter, r *http.Request) {
+
 	fmt.Println("Endpoint hit")
 	conn, err := noshotv2.Upgrade(w, r)
 	if err != nil {
 		fmt.Fprintf(w, "%+v\n", err)
 	}
 
+	//I'd rather see the Human constructor be used here
 	player := &noshotv2.Human{
-		Conn: conn,
-		Game: game,
-		ID:   randomdata.SillyName(),
+		Conn:  conn,
+		Lobby: lobby,
+		ID:    randomdata.SillyName(),
 	}
-	game.AddAnyTypeOfPlayer <- player
+	lobby.AddPlayerToLobby <- player
+
 	player.Read()
 }
 func setupRoutes() {
-	game := noshotv2.NewGame()
-	go game.Start()
-
+	lobby := noshotv2.NewLobby()
+	go lobby.Start()
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(game, w, r)
+		serveWs(lobby, w, r)
 	})
 }
 func main() {

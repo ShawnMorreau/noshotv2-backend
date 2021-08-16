@@ -5,28 +5,28 @@ import (
 	"time"
 )
 
-const KEEP_ALIVE_TYPE = 55
-const HOST = 0
-const SLEEP_TIME = 25
+const (
+	KEEP_ALIVE_TYPE = 55
+	SLEEP_TIME      = 50
+)
 
 /*
 	Heroku kills any websocket connections that hasn't had anything pushed through
 	for 55 seconds, so I have a goroutine that sleeps for 54 seconds and then sends a
 	blank piece of info over that I can just ignore by checking Type==KEEP_ALIVE_TYPE
 */
-func (game *Game) StartPings() {
+func (lobby *Lobby) StartPings() {
 	for {
 		time.Sleep(SLEEP_TIME * time.Second)
-		game.KeepSocketAlive()
+		lobby.KeepSocketAlive()
 	}
 }
-func (game *Game) KeepSocketAlive() {
-	if len(game.Players) == 0 {
+func (lobby *Lobby) KeepSocketAlive() {
+	if len(lobby.players) == 0 {
 		return
 	} else {
 
-		if err := game.Host.Conn.WriteJSON(GameState{
-			Host: game.Host.ID,
+		if err := lobby.GetPlayerFromLobby().Conn.WriteJSON(GameState{
 			Type: KEEP_ALIVE_TYPE,
 			Body: "...",
 		}); err != nil {
@@ -34,4 +34,12 @@ func (game *Game) KeepSocketAlive() {
 			return
 		}
 	}
+}
+func (lobby *Lobby) GetPlayerFromLobby() *Human {
+	var key *Human
+	for k := range lobby.players {
+		key = k
+		break
+	}
+	return key
 }

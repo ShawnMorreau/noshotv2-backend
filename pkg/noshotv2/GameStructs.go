@@ -14,6 +14,7 @@ type Game struct {
 	Turn               int
 	PlayerAndAction    playerAndActionRequired
 }
+
 type playerAndActionRequired struct {
 	Turn        int
 	Action      string

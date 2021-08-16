@@ -1,6 +1,9 @@
 package noshotv2
 
-import "strings"
+import (
+	"log"
+	"strings"
+)
 
 //If the function sends any kind of data back to the client(s). It's likely in here
 
@@ -18,6 +21,7 @@ func (game *Game) createAndSendPlayerJoinedOrLeft(Type int, body string, who str
 		}
 	}
 }
+
 func (game *Game) newRound() {
 	game.Turn = game.Judge
 	playerAndActionRequired := game.getPlayerAndActionRequired()
@@ -87,4 +91,34 @@ func (game *Game) handleCards(message Payload, delimiter string) {
 			})
 		}
 	}
+}
+
+type LobbyEvent struct {
+	MyGame *Game
+	ID     string
+	Games  []GameInfo
+}
+type GameInfo struct {
+	Host       string
+	NumPlayers int
+}
+
+func (lobby *Lobby) sendLobbyEvent(Type int, body, who string) {
+	for client := range lobby.players {
+		if err := client.Conn.WriteJSON(LobbyEvent{
+			// Games: lobby.buildGameInfo(),
+			ID: who,
+		}); err != nil {
+			log.Fatalln(err)
+			return
+		}
+	}
+}
+
+func (lobby *Lobby) buildGameInfo() []GameInfo {
+	var gameInfo = []GameInfo{}
+	for _, game := range lobby.games {
+		gameInfo = append(gameInfo, GameInfo{Host: game.Host.GetID(), NumPlayers: len(game.PlayersArray)})
+	}
+	return gameInfo
 }

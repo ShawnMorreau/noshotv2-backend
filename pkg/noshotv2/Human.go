@@ -10,6 +10,7 @@ type Human struct {
 	ID    string
 	store *PlayerCardsStore
 	Conn  *websocket.Conn
+	Lobby *Lobby
 	Game  *Game
 }
 
@@ -28,8 +29,11 @@ func (p *Human) GetStore() *PlayerCardsStore {
 
 func (player *Human) Read() {
 	defer func() {
-		player.Game.Unregister <- player
+		if player.Game != nil {
+			player.Game.Unregister <- player
+		}
 		player.Conn.Close()
+		player.Lobby.RemovePlayerFromLobby <- player
 	}()
 
 	for {
@@ -38,6 +42,10 @@ func (player *Human) Read() {
 			log.Println(err)
 			return
 		}
-		player.Game.Broadcast <- Payload{Type: messageType, Message: string(p), User: player.ID}
+		if player.Game != nil {
+			player.Game.Broadcast <- Payload{Type: messageType, Message: string(p), User: player.ID}
+		} else {
+			player.Lobby.MessageBus <- GameEvent{Message: string(p), User: player.ID}
+		}
 	}
 }
