@@ -7,3 +7,9 @@ Milestones 1:
     - I did a bad thing. I started writing a bunch of code again without writing the tests. A lot of code changed meaning there's a good chance my tests don't pass anymore. On the plus side - I have the game working as it did before with much more managable code, meaning adding bots will be much easier than it would have been before. My main focus now will be to ensure I am testing the things that for sure need to be tested. Maybe add in some integration tests to ensure that all my components are working well together on the backend.  
 
    
+I have ran into a point where I can either keep building this project out and make it a production grade game or stay where I am. The purpose of this project was to be able to play the card game "Red Flags" with my girlfriend. The game was sold out so I made this and we are able to play. It has a few known bugs as of right now and is missing logic, but it serves it's purpose. Given that there's tons of edge cases ahead, I believe it will be more productive for me to move on to better things and maybe come back to this at a later time. 
+
+Known bugs: 
+    - Enters closing state after no events have been sent for a period of time. I though I had this fixed but it came up again.
+    - closing the browser mid game is a no no. Especially with bots
+    

@@ -7,7 +7,7 @@ import (
 
 const KEEP_ALIVE_TYPE = 55
 const HOST = 0
-const SLEEP_TIME = 25
+const SLEEP_TIME = 20
 
 /*
 	Heroku kills any websocket connections that hasn't had anything pushed through
